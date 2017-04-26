@@ -1,5 +1,6 @@
 import os
 import string
+import math
 from ForceField3 import chargePDB, epsilon_vdw_PDB
 
 def parserPDB(infile):
@@ -142,7 +143,7 @@ def assignParams(dPDB, dcharge, dvdw, depsilon):
 					dPDB[chain][resi][atomi]["epsilon"] =  depsilon[dPDB[chain][resi]["residu"]][atomi]
 
 
-def preparePDB(dPDB) :
+def preparePDB(infile) :
     """
     assigning all the atomic params (e.g. charges, vdw and epsilon) for all the atoms
     of the infile PDB
@@ -152,7 +153,18 @@ def preparePDB(dPDB) :
     # get param
     dcharge = chargePDB()
     dvdw, depsilon = epsilon_vdw_PDB()
+    
+    dPDB = parserPDB(infile)
 
     assignParams(dPDB, dcharge, dvdw, depsilon)
 
     return dPDB
+
+def distancePoints((x1,y1,z1),(x2,y2,z2)):
+    """Computes the distance between the two sets of coordinates
+       input: 2 tuples with the corresponding coordinates 
+       output: distance"""
+    x = (x1-x2)
+    y = (y1-y2)
+    z = (z1-z2)
+    return math.sqrt(x*x+y*y+z*z)
