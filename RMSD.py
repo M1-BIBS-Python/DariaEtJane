@@ -3,10 +3,9 @@
 
 import math
 from math import sqrt
-from ParserPDB import parserPDB
 import sys
 from Usage import usage
-from structureTools import distancePoints
+from structureTools import distancePoints, parserPDB
 
 	
 	
