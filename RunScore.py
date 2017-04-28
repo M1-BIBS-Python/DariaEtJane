@@ -1,4 +1,5 @@
 import math
+import sys
 from ForceField3 import chargePDB, epsilon_vdw_PDB
 from structureTools import distancePoints
 
@@ -55,8 +56,8 @@ def compEner(dPDB1, dPDB2, chain1, chain2) :
                     
                     Rij = distancePoints(coordi, coordj)
                     #print "%s %s %s VS %s %s %s"%(chain1, resi, atomi, chain2, resj, atomj)
-                    #print dPDB[chain1][resi][atomi]
-                    #print dPDB[chain2][resj][atomj]
+                    #print dPDB1[chain1][resi][atomi]
+                    #print dPDB2[chain2][resj][atomj]
                     Aij = computeAij(dPDB1[chain1][resi][atomi], dPDB2[chain2][resj][atomj])
                     Bij = computeBij(dPDB1[chain1][resi][atomi], dPDB2[chain2][resj][atomj])
                     #print "%s %s %s VS %s %s %s= %s %s %s"%(chain1, resi, atomi, chain2, resj, atomj, Rij, Aij, Bij)
