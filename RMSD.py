@@ -6,21 +6,15 @@ from math import sqrt
 from ParserPDB import parserPDB
 import sys
 from Usage import usage
-
-def distancePoints((x1,y1,z1),(x2,y2,z2)):
-    """Computes the distance between the two sets of coordinates
-       input: 2 tuples with the corresponding coordinates 
-       output: distance"""
-
-    x = (x1-x2)
-    y = (y1-y2)
-    z = (z1-z2)
-    return math.sqrt(x*x+y*y+z*z)
+from structureTools import distancePoints
 
 	
 	
 def computeRMSD (dPDB1, dPDB2, l_atoms):
-	
+	"""Compute RMSD between the two PDB dictionnaries on the given atom list
+	input : 2 PDB dictionaries
+	output : RMSD score"""
+
 	N = 0
 	
 	distanceSum = 0
