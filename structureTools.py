@@ -1,7 +1,12 @@
 import os
 import string
 import math
+import numpy
+from path import path
 from ForceField3 import chargePDB, epsilon_vdw_PDB
+
+dcharge = chargePDB()
+dvdw, depsilon = epsilon_vdw_PDB()
 
 def parserPDB(infile):
 	
@@ -150,12 +155,8 @@ def preparePDB(infile) :
     Input: filename of the pdb
     Output: dico dPDB with 3D coords and charges, vdw and epsilon params for each atom
     """
-    # get param
-    dcharge = chargePDB()
-    dvdw, depsilon = epsilon_vdw_PDB()
     
     dPDB = parserPDB(infile)
-
     assignParams(dPDB, dcharge, dvdw, depsilon)
 
     return dPDB
@@ -168,3 +169,46 @@ def distancePoints((x1,y1,z1),(x2,y2,z2)):
     y = (y1-y2)
     z = (z1-z2)
     return math.sqrt(x*x+y*y+z*z)
+
+def scorelist(dPDB):
+	n=0
+	listeN=[]
+	print dPDB.values()
+	
+	filename="Scoring.txt"
+	pathname="/home/kazevedo/Documents/M1BIBS/S2/Python/GitRepo/DariaEtJane/scoring_Cornell"
+	
+	if not os.path.exists(pathname):
+		os.makedirs(pathname)
+	
+	filepath = os.path.join(pathname, filename)
+	fileid = open(filepath, 'w+')
+	
+	i=0
+	while i<len(dPDB.values()):
+		n+=1
+		listeN.append(n)
+		print listeN
+		i+=1
+	
+	xarray= numpy.array(listeN)
+	yarray= numpy.array(dPDB.values())
+	
+	data= numpy.array([xarray,yarray])
+	data= data.T
+	data= numpy.sort(data, axis=0)
+	
+	numpy.savetxt(fileid,data,fmt=['%d','%d'])
+	
+	fileid.close()
+
+def writePDB(dPDB, prediction = "complexe_predit_score1.pdb") :
+
+    pred = open(prediction, "w")
+
+    for chain in dPDB["nchaine"]:
+        for res in dPDB[chain]["position"] :
+            for atom in dPDB[chain][res]["atome"] :
+				pred.write("ATOM  %5s  %-4s%3s %s%4s    %8.3f%8.3f%8.3f  1.00  1.00 X X\n"%(dPDB[chain][res][atom]["id"], atom, dPDB[chain][res]["residu"],chain, res,dPDB[chain][res][atom]["x"], dPDB[chain][res][atom]["y"],dPDB[chain][res][atom]["z"] ))
+                    
+    pred.close()
