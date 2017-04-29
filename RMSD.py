@@ -5,7 +5,8 @@ import math
 from math import sqrt
 import sys
 from Usage import usage
-from structureTools import parserPDB, distancePoints
+from structureTools import distancePoints
+from parsing import parserPDB
 
 	
 def computeRMSD (dPDB1, dPDB2, l_atoms):
