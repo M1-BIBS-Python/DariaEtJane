@@ -1,5 +1,7 @@
-from structureTools import parserPDB, preparePDB, scorelist
-from RunScore import compEner
+from structureTools import scorelist, writePDB
+from parsing import parserPDB, preparePDB, parseDirectory
+from Usage import usage
+from RMSD import computeRMSD
 import sys
 from path import path
 import re
@@ -10,42 +12,64 @@ if __name__ == '__main__':
 
 	'''
 	recuperation des arguments du fichier recepteur et du dossier solutions ligand
-	calcul des scores et choix du meilleur
 	'''
 	try:
-		infile = sys.argv[sys.argv.index("-pdb1")+1]
-		indir = sys.argv[sys.argv.index("-pdb2")+1]
-		print "pdb files to treat:", infile1, infile2
-		dico_Rec = preparePDB(infile)
-		dico_Scores = {}
-		n=0
-		for files in path("indir").walkfiles():
-			if file.endswith(".pdb") :
-				dico_confH = preparePDB(files)
-				dico_Scores[files]= compEner(dico_Rec, dico_confH, "B", "D")
-				dico_confH = {}
-		
-		scorelist(dico_Scores)
-		bestScore = float(max(dico_Scores.values()))
-
-		print bestScore
+		infile = sys.argv[1]
+		indir = sys.argv[2]
 		
 	except:    
 		usage()
-		print "ERROR: please enter the names of the pdb files\n"
+		print "ERROR: please enter the names of the pdb files to analyze\n"
 		sys.exit()
+
+	'''
+	Parsing et preparation du fichier du recepteur
+	'''
+	try:
+		dico_Rec = preparePDB(infile)
+	except:
+		print "ERROR : Parsing of "+infile+" failed"
+	
+	'''
+	Parsing du repertoire contenant les configurations de ligand
+	Determination des scores
+	'''
+	try:
+		listFiles, listScores = parseDirectory(indir, dico_Rec)
+	except:
+		print "ERROR : Parsing of "+indir+" failed"
+
+	'''
+	Determination du meilleur score
+	'''
+	try:
+		filenum = int(scorelist(listFiles, listScores))
+	except:
+		print "ERROR : Could not find the file corresponding to the best score"
+	
+	filename="1BRS_A_1BRS_B_allatom_"+str(filenum)+"_DP.pdb"
+	pathfile=[indir,'/',filename]
+	dico_Lig = parserPDB(''.join(pathfile))
+	
+	'''
+	Ecriture du fichier contenant le classement des scores
+	'''
+	try:
+		writePDB(dico_Rec, dico_Lig, prediction = "complexe_predit_score1.pdb")
+	except:
+		print "ERROR : Could not create list of scoring"
 		
 	'''
 	Recuperation des fichiers pdb du ligand, recepteur et complexe natif donnes en argument
 	'''
 	try:
-		nativeComplex = sys.argv[sys.argv.index("-pdb3")+1]
-		nativeLigand = sys.argv[sys.argv.index("-pdb4")+1]
-		nativeReceptor = sys.argv[sys.argv.index("-pdb5")+1]
+		nativeComplex = sys.argv[3]
+		nativeLigand = sys.argv[4]
+		nativeReceptor = sys.argv[5]
 		
 	except :
 		usage()
-		print "ERROR: please enter the names of the pdb files\n"
+		print "ERROR: please enter the names of the pdb files to compare\n"
 		sys.exit()
 		
 	'''
@@ -64,6 +88,10 @@ if __name__ == '__main__':
 	except : 
 		print "ERROR : File parsing of "+nativeReceptor+" failed"
 	
+	try :
+		d5 = parserPDB("complexe_predit_score1.pdb")
+	except :
+		print "EROOR : File parsing of complexe_predit_score1.pdb failed"
 	
 	try :
 		d6 = parserPDB(nativeComplex)
@@ -75,7 +103,7 @@ if __name__ == '__main__':
 	Parametrisation de la fonction computeRMSD
 	'''	
 	try :
-		atomParam = sys.argv[sys.argv.index("-atom")+1]
+		atomParam = sys.argv[6]
 		l_atomParam = []
 		if atomParam == ALL :
 			l_atomParam = ["atom"]
@@ -85,20 +113,19 @@ if __name__ == '__main__':
 	
 	except : 
 		l_atomParam = ["CA", "N", "C", "O"]
-		print computeRMSD(d1, d2, l_atomParam)
+		print computeRMSD(dico_Lig, d2, l_atomParam)
 		
 	
 	try :
 		'''
 		Calcul du RMSD
-		d1 et d2 sont les dictionnaires correspondants aux pdb de la meilleure solution ligand et du ligand natif (-pdb4)
+		dico_Lig et d2 sont les dictionnaires correspondants aux pdb de la meilleure solution ligand et du ligand natif (-pdb4)
 		dico_Rec et d4 sont les dictionnaires correspondants aux pdb du recepteur et du recepteur natif (-pdb5)
 		d5 et d6 sont les dictionnaires correspondants aux pdb du complexe predit et du complexe natif (-pdb3)
-		Libre a toi de les renommer bien sur
 		'''
-		print "ligand RMSD : "+computeRMSD(d1, d2, l_atomParam)
-		print "receptor RMSD : "computeRMSD(dico_Rec, d4, l_atomParam)
-		print "complex RMSD : "computeRMSD(d5, d6, l_atomParam)
+		print "ligand RMSD : "+computeRMSD(dico_Lig, d2, l_atomParam)
+		print "receptor RMSD : "+computeRMSD(dico_Rec, d4, l_atomParam)
+		print "complex RMSD : "+computeRMSD(d5, d6, l_atomParam)
 
 	except :
 		print "ERROR : RMSD calculation failed."
