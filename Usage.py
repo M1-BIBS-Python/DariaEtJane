@@ -12,7 +12,7 @@ def usage():
 			"\t->the corresponding RMSD on the ligand only\n"
 			"\t->the calculation and the corresponding RMSD on the receptor only\n"
 			"\t->the corresponding number of native contacts\n\n"
-			"Obligatory argument : -pdb1,-pdb2,-pdb3, -pdb4, -pdb5 <path of the file/directory> -NbLigand <integer>\n"
+			"Obligatory argument : -pdb1,-pdb2,-pdb3, -pdb4, -pdb5 <path of the file/directory>\n"
 			"\t-> absolute or relative path\n"	  
 			"Optional argument : -atom <name of atom>\n"
 			"\t-> the name of the atom used in the RMSD calculation separated with '_'\n"
