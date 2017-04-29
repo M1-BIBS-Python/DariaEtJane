@@ -4,7 +4,6 @@ def usage():
 			"Input = \n"
 			"\t-> -pdb1 a receptor pdb file\n"
 			"\t-> -pdb2 a directory containing files of ligand solutions in pdb format\n"
-			"\t-> -NbLigand the number of ligand solutions in the file directory\n"
 			"\t-> -pdb3 the real 3D structure complexe pdb file\n"
 			"\t-> -pdb4 the native ligand\n"
 			"\t-> -pdb5 the native receptor\n\n"
