@@ -5,6 +5,7 @@ from RMSD import computeRMSD
 import sys
 from path import path
 import re
+from Interface import computeInterface, compareInterface
 
 
 
@@ -14,8 +15,8 @@ if __name__ == '__main__':
 	recuperation des arguments du fichier recepteur et du dossier solutions ligand
 	'''
 	try:
-		infile = sys.argv[1]
-		indir = sys.argv[2]
+		infile = sys.argv[sys.argv.index("-pdb1")+1]
+		indir = sys.argv[sys.argv.index("-pdb2")+1]
 		
 	except:    
 		usage()
@@ -63,9 +64,9 @@ if __name__ == '__main__':
 	Recuperation des fichiers pdb du ligand, recepteur et complexe natif donnes en argument
 	'''
 	try:
-		nativeComplex = sys.argv[3]
-		nativeLigand = sys.argv[4]
-		nativeReceptor = sys.argv[5]
+		nativeComplex = sys.argv[sys.argv.index("-pdb3")+1]
+		nativeLigand = sys.argv[sys.argv.index("-pdb4")+1]
+		nativeReceptor = sys.argv[sys.argv.index("-pdb5")+1]
 		
 	except :
 		usage()
@@ -76,25 +77,28 @@ if __name__ == '__main__':
 	Parsing des fichiers pdb du ligand, recepteur et complexe natif
 	'''
 	try :
-		d2 = parserPDB(nativeLigand)
+		dico_lig_natif = parserPDB(nativeLigand)
 		
 	except : 
 		print "ERROR : File parsing of "+nativeLigand+" failed"
 		
 		
 	try :
-		d4 = parserPDB(nativeReceptor)
+		dico_rec_natif = parserPDB(nativeReceptor)
 		
 	except : 
 		print "ERROR : File parsing of "+nativeReceptor+" failed"
 	
+	
 	try :
-		d5 = parserPDB("complexe_predit_score1.pdb")
+		dico_compl_predit = parserPDB("complexe_predit_score1.pdb")
+		
 	except :
 		print "EROOR : File parsing of complexe_predit_score1.pdb failed"
 	
+	
 	try :
-		d6 = parserPDB(nativeComplex)
+		dico_compl_natif = parserPDB(nativeComplex)
 		
 	except : 
 		print "ERROR : File parsing of "+nativeComplex+" failed"
@@ -103,7 +107,7 @@ if __name__ == '__main__':
 	Parametrisation de la fonction computeRMSD
 	'''	
 	try :
-		atomParam = sys.argv[6]
+		atomParam = sys.argv[sys.argv.index("-atom")+1]
 		l_atomParam = []
 		if atomParam == ALL :
 			l_atomParam = ["atom"]
@@ -113,19 +117,61 @@ if __name__ == '__main__':
 	
 	except : 
 		l_atomParam = ["CA", "N", "C", "O"]
-		print computeRMSD(dico_Lig, d2, l_atomParam)
 		
 	
 	try :
 		'''
 		Calcul du RMSD
-		dico_Lig et d2 sont les dictionnaires correspondants aux pdb de la meilleure solution ligand et du ligand natif (-pdb4)
-		dico_Rec et d4 sont les dictionnaires correspondants aux pdb du recepteur et du recepteur natif (-pdb5)
-		d5 et d6 sont les dictionnaires correspondants aux pdb du complexe predit et du complexe natif (-pdb3)
+		dico_Lig et dico_lig_natif sont les dictionnaires correspondants aux pdb de la meilleure solution ligand et du ligand natif (-pdb4)
+		dico_Rec et dico_rec_natif sont les dictionnaires correspondants aux pdb du recepteur et du recepteur natif (-pdb5)
+		dico_compl_predit et dico_compl_natif sont les dictionnaires correspondants aux pdb du complexe predit et du complexe natif (-pdb3)
 		'''
-		print "ligand RMSD : "+computeRMSD(dico_Lig, d2, l_atomParam)
-		print "receptor RMSD : "+computeRMSD(dico_Rec, d4, l_atomParam)
-		print "complex RMSD : "+computeRMSD(d5, d6, l_atomParam)
+		print "ligand RMSD : "+computeRMSD(dico_Lig, dico_lig_natif, l_atomParam)
+		print "receptor RMSD : "+computeRMSD(dico_Rec, dico_rec_natif, l_atomParam)
+		print "complex RMSD : "+computeRMSD(dico_compl_predit, dico_compl_natif, l_atomParam)
 
 	except :
 		print "ERROR : RMSD calculation failed."
+
+
+	'''
+	Parametrisation de la fonction computeInterface
+	'''	
+	try :
+		thresholdParam = float(sys.argv[sys.argv.index("-threshold")+1])
+	except :
+		thresholdParam = 2
+		
+		
+	try :
+		interfaceModeParam = (sys.argv[sys.argv.index("-mode")+1])
+	except :
+		interfaceModeParam = "center"
+	
+	
+	try :
+		'''
+		Calcul des interfaces du cmplexe natif et du complexe predit
+		'''
+		computeInterface(dico_compl_natif, thresholdParam, interfaceModeParam)
+		computeInterface(dico_compl_predit, thresholdParam, interfaceModeParam)
+		
+	except :
+		print "ERROR : Interface calculation failed."
+		
+	
+	try :
+		'''
+		Comparaison des interfaces
+		'''
+		nbresInter = compareInterface(dico_compl_natif, dico_compl_predit)
+		
+	except :
+		print "ERROR : Interface comparison failed."
+		
+		
+		
+	print "Number of native contacts: "+nbresInter
+		
+		
+		

@@ -12,11 +12,18 @@ def usage():
 			"\t->the corresponding RMSD on the ligand only\n"
 			"\t->the calculation and the corresponding RMSD on the receptor only\n"
 			"\t->the corresponding number of native contacts\n\n"
-			"Obligatory argument : -pdb1,-pdb2,-pdb3, -pdb4, -pdb5 <path of the file/directory>\n"
+			"Obligatory argument : -pdb1,-pdb2,-pdb3, -pdb4, -pdb5 <path of the file/directory> -NbLigand <integer>\n"
 			"\t-> absolute or relative path\n"	  
-			"Optional argument : -atom <name of atom>\n"
-			"\t-> the name of the atom used in the RMSD calculation separated with '_'\n"
-			"\t-> default : CA, N, C, O\n"
-			"\t-> to apply RMSD calculation on all the atoms, write 'ALL'\n")
+			"Optional arguments : \n"
+			"\t-atom <name of atom>\n"
+			"\t\t-> the name of the atom used in the RMSD calculation separated with '_'\n"
+			"\t\t-> default : CA, N, C, O\n"
+			"\t\t-> to apply RMSD calculation on all the atoms, write 'ALL'\n"
+			"\t-threshold <threshold for the interface>\n"
+			"\t\t-> the threshold for the interface calculation\n"
+			"\t\t-> default : 2\n"
+			"\t-mode <distance mode for the interface>\n"
+			"\t\t-> the mode of distance calculation for the interface. Options are 'atom' for simple distance between atoms and 'center' for the center of mass distance\n"
+			"\t\t-> default : center\n")
 	
 	print usage

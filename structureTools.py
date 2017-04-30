@@ -13,6 +13,58 @@ def distancePoints((x1,y1,z1),(x2,y2,z2)):
     z = (z1-z2)
     return math.sqrt(x*x+y*y+z*z)
 
+
+def centerMassOfResidue(dPDB):
+    """Calculates the center of mass of each residue contained in dPDB (all = True & reslist = False) or a 
+       subset of residues given in the residue list (["12_A", "13_A", "27_A"])"""
+
+    reslist = dPDB["position"]
+    
+        
+    for res in reslist :        
+        x = y = z = 0.0
+        
+        # looping over the current residue atoms
+        for atom in dPDB[res]["atome"] :
+            x +=dPDB[res][atom]["x"]
+            y +=dPDB[res][atom]["y"]
+            z +=dPDB[res][atom]["z"]
+            
+        Xcm = float(x)/len(dPDB[res]["atome"]) 
+        Ycm = float(y)/len(dPDB[res]["atome"])
+        Zcm = float(z)/len(dPDB[res]["atome"])
+        dPDB[res]["XCM"] = Xcm
+        dPDB[res]["YCM"] = Ycm
+        dPDB[res]["ZCM"] = Zcm
+        
+
+def computeDist_dico(d_res1, d_res2, mode) :
+    """res1, res2 are dico corresponding to residue 1 and residue 2 respectively """
+
+	#Compute the distance between atoms of a couple of residues
+    if mode == "atom" :
+        minval = 1000000
+        for atom1 in d_res1["atome"] :
+            coord1 = [d_res1[atom1]["x"], d_res1[atom1]["y"], d_res1[atom1]["z"]]
+            for atom2 in d_res2["atome"] :
+                coord2 = [d_res2[atom2]["x"], d_res2[atom2]["y"], d_res2[atom2]["z"]]
+                dist = distancePoints((coord1[0], coord1[1], coord1[2]),(coord2[0],coord2[1], coord2[2]))
+                if minval > dist :
+                    minval = dist
+
+	#Computes the distance between the CM of the 2 given residues
+    elif mode == "center" : 
+        dPDBtmp = {}
+        dPDBtmp["position"] = ["res1", "res2"]
+        dPDBtmp["res1"] = d_res1
+        dPDBtmp["res2"] = d_res2
+
+        centerMassOfResidue(dPDBtmp)
+        minval = distancePoints((dPDBtmp["res1"]["XCM"],dPDBtmp["res1"]["YCM"],dPDBtmp["res1"]["ZCM"]),(dPDBtmp["res2"]["XCM"],dPDBtmp["res2"]["YCM"],dPDBtmp["res2"]["ZCM"]))
+        
+    return minval
+
+
 def scorelist(listFiles, listScores):
 	filename="Scoring.txt"
 	pathname="/home/kazevedo/Documents/M1BIBS/S2/Python/GitRepo/DariaEtJane/scoring_Cornell"
@@ -34,6 +86,7 @@ def scorelist(listFiles, listScores):
 	fileid.close()
 	
 	return data[0][0]
+
 
 def writePDB(dPDBrec, dPDBlig, prediction = "complexe_predit_score1.pdb") :
 
