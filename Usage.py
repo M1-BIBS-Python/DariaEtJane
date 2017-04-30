@@ -3,7 +3,7 @@ def usage():
 			"Then calculate the RMSD between the real complexe structure, and the best scored structure and the native contact number in the predicted structre.\n\n"
 			"Input = \n"
 			"\t-> -pdb1 a receptor pdb file\n"
-			"\t-> -pdb2 a directory containing files of ligand solutions in pdb format\n"
+			"\t-> -pdb2 the path of a directory containing files of ligand solutions in pdb format\n"
 			"\t-> -pdb3 the real 3D structure complexe pdb file\n"
 			"\t-> -pdb4 the native ligand\n"
 			"\t-> -pdb5 the native receptor\n\n"
