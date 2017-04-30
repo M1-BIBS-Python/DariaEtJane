@@ -126,9 +126,9 @@ if __name__ == '__main__':
 		dico_Rec et dico_rec_natif sont les dictionnaires correspondants aux pdb du recepteur et du recepteur natif (-pdb5)
 		dico_compl_predit et dico_compl_natif sont les dictionnaires correspondants aux pdb du complexe predit et du complexe natif (-pdb3)
 		'''
-		print "ligand RMSD : "+computeRMSD(dico_Lig, dico_lig_natif, l_atomParam)
-		print "receptor RMSD : "+computeRMSD(dico_Rec, dico_rec_natif, l_atomParam)
-		print "complex RMSD : "+computeRMSD(dico_compl_predit, dico_compl_natif, l_atomParam)
+		print "ligand RMSD : "+str(computeRMSD(dico_Lig, dico_lig_natif, l_atomParam))
+		print "receptor RMSD : "+str(computeRMSD(dico_Rec, dico_rec_natif, l_atomParam))
+		print "complex RMSD : "+str(computeRMSD(dico_compl_predit, dico_compl_natif, l_atomParam))
 
 	except :
 		print "ERROR : RMSD calculation failed."
@@ -171,7 +171,7 @@ if __name__ == '__main__':
 		
 		
 		
-	print "Number of native contacts: "+nbresInter
+	print "Number of native contacts: "+str(nbresInter)
 		
 		
 		
