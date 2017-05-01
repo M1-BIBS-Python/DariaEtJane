@@ -5,11 +5,11 @@ import math
 from math import sqrt
 import sys
 from Usage import usage
-from structureTools import distancePoints
+from StructureTools import distancePoints
 from parsing import parserPDB
 
 	
-def computeRMSD (dPDB1, dPDB2, l_atoms):
+def computeRMSD (dPDB1, dPDB2, l_atoms, bfactor):
 	"""Compute RMSD between the two PDB dictionnaries on the given atom list
 	input : 2 PDB dictionaries
 	output : RMSD score"""
@@ -17,6 +17,8 @@ def computeRMSD (dPDB1, dPDB2, l_atoms):
 	N = 0
 	
 	distanceSum = 0
+	
+	RMSD = 100000
 	
 	for chain in dPDB1 :
 		
@@ -30,11 +32,20 @@ def computeRMSD (dPDB1, dPDB2, l_atoms):
 				
 						if atom in l_atoms :
 							
-							distanceSum += pow(distancePoints((dPDB1[chain][pos][atom]["x"],dPDB1[chain][pos][atom]["y"], dPDB1[chain][pos][atom]["z"]),(dPDB2[chain][pos][atom]["x"], dPDB2[chain][pos][atom]["y"], dPDB2[chain][pos][atom]["z"])), 2)
-							N += 1		
-							
+							if bfactor :
+								
+								if dPDB1[chain][pos]["bfactor"] :
+									
+									distanceSum += pow(distancePoints((dPDB1[chain][pos][atom]["x"],dPDB1[chain][pos][atom]["y"], dPDB1[chain][pos][atom]["z"]),(dPDB2[chain][pos][atom]["x"], dPDB2[chain][pos][atom]["y"], dPDB2[chain][pos][atom]["z"])), 2)
+									N += 1		
+							else :
+								
+								distanceSum += pow(distancePoints((dPDB1[chain][pos][atom]["x"],dPDB1[chain][pos][atom]["y"], dPDB1[chain][pos][atom]["z"]),(dPDB2[chain][pos][atom]["x"], dPDB2[chain][pos][atom]["y"], dPDB2[chain][pos][atom]["z"])), 2)
+								N += 1	
 				
-	RMSD = sqrt(distanceSum/N)		
+	if N!=0:
+		RMSD = sqrt(distanceSum/N)		
+	
 	return RMSD
 
 
