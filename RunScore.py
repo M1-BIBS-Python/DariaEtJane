@@ -1,7 +1,6 @@
 import math
 import sys
-from ForceField3 import chargePDB, epsilon_vdw_PDB
-from structureTools import distancePoints
+from StructureTools import distancePoints
 
 def computeAij(d_atomi, d_atomj) :
 
@@ -72,3 +71,4 @@ def compEner(dPDB1, dPDB2, chain1, chain2) :
     #print cmti, cmtj, cmt
 
     return Eij
+    
