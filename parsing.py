@@ -1,6 +1,7 @@
 from ForceField3 import chargePDB, epsilon_vdw_PDB
 from RunScore import compEner
 from path import path
+import os
 
 dcharge = chargePDB()
 dvdw, depsilon = epsilon_vdw_PDB()
@@ -163,12 +164,18 @@ def parseDirectory(indir, dico_Rec):
 	n=0
 	listFiles=[]
 	listScores=[]
-	for files in path(indir).walkfiles():
-		if files.endswith(".pdb") :
+	for files in os.listdir(indir):
+		if files.startswith("1BRS") :
+			pathfile=os.path.join(indir,files)
 			n+=1
-			dico_confH = preparePDB(files)
-			listFiles.append(n)
-			listScores.append(compEner(dico_Rec, dico_confH, "B", "D"))
+			togo=949-n
+			print "Dealing with file "+files
+			print "Number of files remaning : "+str(togo)
+			dico_confH = preparePDB(pathfile)
+			a, b, c, d, e, f, g=files.split("_")
+			f=int(f)
+			listFiles.append(f)
+			listScores.append(compEner(dico_Rec, dico_confH, 'B', 'D'))
 			dico_confH = {}
 	
 	return listFiles, listScores
