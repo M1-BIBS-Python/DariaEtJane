@@ -77,11 +77,21 @@ def computeDist_dico(d_res1, d_res2, mode) :
 
 
 def scorelist(listFiles, listScores, filename):
-	pathname="/home/kazevedo/Documents/M1BIBS/S2/Python/GitRepo/DariaEtJane/scoring_Cornell"
+	"""
+	Create in a file a ranking of the scores from best (minimum value) to worst (maximum value) with the correspond file number in front
+    Input: the list of the files and the list of the scores, as well as the name wished for the file
+    Output: the ranking in a file
+    """
+	dir_path = os.path.dirname(os.path.realpath(__file__))
+	pathname=dir_path+"/scoring_Cornell"
 	
-	if not os.path.exists(pathname):
-		os.makedirs(pathname)
-	
+	try:
+		if not os.path.exists(pathname):
+			os.makedirs(pathname)
+	except:
+		print "ERROR : You don't seem to have the rights to write in this directory"
+		sys.exit()
+		
 	filepath = os.path.join(pathname, filename)
 	fileid = open(filepath, 'w+')
 	
@@ -99,12 +109,16 @@ def scorelist(listFiles, listScores, filename):
 
 
 def writePDB(dPDBrec, dPDBlig, prediction) :
-
-    pred = open(prediction, "w")
-
-    for chain in dPDBrec["nchaine"]:
-        for res in dPDBrec[chain]["position"] :
-            for atom in dPDBrec[chain][res]["atome"] :
+	"""
+	Write the PDB file of the predicted complex
+	Input: dictionnaries of the receptor and solution ligand, as well as the name of the PDB file
+	"""
+	
+	pred = open(prediction, "w")
+	
+	for chain in dPDBrec["nchaine"]:
+		for res in dPDBrec[chain]["position"] :
+			for atom in dPDBrec[chain][res]["atome"] :
 				pred.write("ATOM  %5d  %-4s%3s %s%4s    %8.3f%8.3f%8.3f  1.00  1.00 X X \n"%(dPDBrec[chain][res][atom]["ID"], atom, dPDBrec[chain][res]["residu"],chain, res,dPDBrec[chain][res][atom]["x"], dPDBrec[chain][res][atom]["y"],dPDBrec[chain][res][atom]["z"] ))
 	
 	for chain in dPDBlig["nchaine"]:
@@ -112,21 +126,29 @@ def writePDB(dPDBrec, dPDBlig, prediction) :
 			for atom in dPDBlig[chain][res]["atome"] :
 				pred.write("ATOM  %5d  %-4s%3s %s%4s    %8.3f%8.3f%8.3f  1.00  1.00 X X\n"%(dPDBlig[chain][res][atom]["ID"], atom, dPDBlig[chain][res]["residu"],chain, res,dPDBlig[chain][res][atom]["x"], dPDBlig[chain][res][atom]["y"],dPDBlig[chain][res][atom]["z"] ))
                     
-    pred.close()
+	pred.close()
 
 def writeInterfacePDB(dPDBcompl, prediction) :
-
-    pred = open(prediction, "w")
-
-    for chain in dPDBcompl["nchaine"]:
-        for res in dPDBcompl[chain]["position"] :
-            for atom in dPDBcompl[chain][res]["atome"] :
+	"""
+	Add the Bfactor in the PDB file of the predicted complex
+    Input: dictionnary containing the Bfactor as well as the name of the new file
+    """
+    
+	pred = open(prediction, "w")
+	
+	for chain in dPDBcompl["nchaine"]:
+		for res in dPDBcompl[chain]["position"] :
+			for atom in dPDBcompl[chain][res]["atome"] :
 				pred.write("ATOM  %5d  %-4s%3s %s%4s    %8.3f%8.3f%8.3f  1.00  %d X X\n"%(dPDBcompl[chain][res][atom]["ID"], atom, dPDBcompl[chain][res]["residu"],chain, res,dPDBcompl[chain][res][atom]["x"], dPDBcompl[chain][res][atom]["y"],dPDBcompl[chain][res][atom]["z"], dPDBcompl[chain][res]["bfactor"] ))
 	
-	
-    pred.close()
+	pred.close()
 
 def extract100Bests(indir):
+	"""
+	Extract the 100 bests scores following the first scoring method to apply the second scoring method to them
+	Input: the directory containing the ranking of the scores
+	Output: a list containing the number of the best files, a list containing the name of the best files, a list containing the best scores
+	"""
 	infile = open("scoring_Cornell/Scoring1.txt")
 	head = list(islice(infile, 100))
 	
