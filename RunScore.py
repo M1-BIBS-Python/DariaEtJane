@@ -3,18 +3,27 @@ import sys
 from StructureTools import distancePoints
 
 def computeAij(d_atomi, d_atomj) :
-
+    """
+    Auxiliary function used in CompEner
+    """
     Aij = math.sqrt(d_atomi["epsilon"]*d_atomj["epsilon"])*(pow((d_atomi["vdw"]+d_atomj["vdw"]),8))
 
     return Aij
 
 def computeBij(d_atomi, d_atomj) :
+    """
+    Auxiliary function used in CompEner
+    """
     Bij = 2*math.sqrt(d_atomi["epsilon"]*d_atomj["epsilon"])*(pow((d_atomi["vdw"]+d_atomj["vdw"]),6))
 
     return Bij
 
 def compEner(dPDB1, dPDB2, chain1, chain2) :
-
+    """
+    First scoring method : compute the energy of the system according to Cornell et al model
+    Input: dictionnary of the receptor, dictionnary of the ligand, and the two chains of interests
+    Output: the energy or score
+    """
     nbresInter = 0
     #structureTools.initBfactor(dPDB)
     #print dPDB["chains"]
