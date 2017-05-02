@@ -4,7 +4,6 @@ from Usage import usage
 from RMSD import computeRMSD
 import sys
 from path import path
-import re
 from Interface import computeInterface, compareInterface, computeInterfaceScore, interfaceHydrophobicity
 
 
@@ -84,6 +83,7 @@ if __name__ == '__main__':
 		
 	except : 
 		print "ERROR : File parsing of "+nativeLigand+" failed"
+		sys.exit()
 		
 		
 	try :
@@ -91,12 +91,14 @@ if __name__ == '__main__':
 		
 	except : 
 		print "ERROR : File parsing of "+nativeReceptor+" failed"
+		sys.exit()
 	
 	try :
 		dico_compl_natif = parserPDB(nativeComplex)
 		
 	except : 
 		print "ERROR : File parsing of "+nativeComplex+" failed"
+		sys.exit()
 			
 	'''
 	Preparation of the receptor pdb file
@@ -105,6 +107,7 @@ if __name__ == '__main__':
 		dico_Rec = preparePDB(infile)
 	except:
 		print "ERROR : Parsing of "+infile+" failed"
+		sys.exit()
 	
 	
 	#########################
@@ -122,7 +125,8 @@ if __name__ == '__main__':
 	try:
 		listFiles, listScores = parseDirectory(indir, dico_Rec)
 	except:
-		print "ERROR : Parsing of "+indir+" failed"	
+		print "ERROR : Parsing of "+indir+" failed : make sure to enter the full path of the directory"
+		sys.exit()	
 	
 
 	'''
@@ -132,6 +136,7 @@ if __name__ == '__main__':
 		filenum = int(scorelist(listFiles, listScores, "Scoring1.txt"))
 	except:
 		print "ERROR : Could not find the file corresponding to the best score"
+		sys.exit()
 	
 	filename="1BRS_A_1BRS_B_allatom_"+str(filenum)+"_DP.pdb"
 	pathfile=[indir,'/',filename]
@@ -144,6 +149,7 @@ if __name__ == '__main__':
 		writePDB(dico_Rec, dico_Lig, prediction = "complexe_predit_score1.pdb")
 	except:
 		print "ERROR : Could not create list of scoring"
+		sys.exit()
 	
 	'''
 	First method predicted complex pdb file parsing
@@ -166,6 +172,7 @@ if __name__ == '__main__':
 		
 	except :
 		print "ERROR : Interface calculation failed."
+		sys.exit()
 		
 	'''
 	Interface comparison
@@ -175,6 +182,7 @@ if __name__ == '__main__':
 		
 	except :
 		print "ERROR : Interface comparison failed."
+		sys.exit()
 
 	
 	print "Number of native contacts: "+str(nbresInter)
@@ -193,6 +201,7 @@ if __name__ == '__main__':
 
 	except :
 		print "ERROR : RMSD calculation failed."
+		sys.exit()
 	
 	'''
 	Editing of the complexe_predit_score1.pdb to add the bfactor
@@ -218,6 +227,7 @@ if __name__ == '__main__':
 		listBestHits, listBestScores, listBestFiles = extract100Bests(indir)
 	except:
 		print "ERROR : Could not extract the 100 best hits"
+		sys.exit()
 	
 	'''
 	Calculation of the second score considering hydrophobicity of the interface residues
@@ -226,6 +236,7 @@ if __name__ == '__main__':
 		listNewScore=interfaceHydrophobicity(listBestHits, listBestScores, dico_Rec, thresholdParam, interfaceModeParam)
 	except:
 		print "ERROR : Could not compute the new score taking the hydrophobicity in paramaters"
+		sys.exit()
 
 	filenum = int(scorelist(listBestFiles, listNewScore, "Scoring2.txt"))
 	
@@ -240,6 +251,7 @@ if __name__ == '__main__':
 		writePDB(dico_Rec, dico_Lig, prediction = "complexe_predit_score2.pdb")
 	except:
 		print "ERROR : Could not create list of scoring"
+		sys.exit()
 	
 	'''
 	Second method predicted complex pdb file parsing
@@ -249,6 +261,7 @@ if __name__ == '__main__':
 		
 	except :
 		print "ERROR : File parsing of complexe_predit_score1.pdb failed"
+		sys.exit()
 
 	#EVALUATION DE LA SOLUTION
 	
@@ -261,6 +274,7 @@ if __name__ == '__main__':
 		
 	except :
 		print "ERROR : Interface calculation failed."
+		sys.exit()
 		
 	'''
 	Interface comparison
@@ -270,6 +284,7 @@ if __name__ == '__main__':
 		
 	except :
 		print "ERROR : Interface comparison failed."
+		sys.exit()
 
 	print "Number of native contacts: "+str(nbresInter)
 		
@@ -287,6 +302,7 @@ if __name__ == '__main__':
 
 	except :
 		print "ERROR : RMSD calculation failed."
+		sys.exit()
 	
 		'''
 	Editing of the complexe_predit_score1.pdb to add the Bfactor
@@ -295,4 +311,5 @@ if __name__ == '__main__':
 	try:
 		writeInterfacePDB(dico_compl_predit,"complexe_predit_score2.pdb")
 	except:
-		print "ERROR : Could not edit complexe_predit_score1.pdb"
+		print "ERROR : Could not edit complexe_predit_score2.pdb"
+		sys.exit()
