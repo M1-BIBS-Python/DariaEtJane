@@ -6,9 +6,11 @@ from path import path
 from itertools import islice
 
 def distancePoints((x1,y1,z1),(x2,y2,z2)):
-    """Computes the distance between the two sets of coordinates
-       input: 2 tuples with the corresponding coordinates 
-       output: distance"""
+    """
+    Computes the distance between the two sets of coordinates
+    input: 2 tuples with the corresponding coordinates 
+    output: distance
+    """
     x = (x1-x2)
     y = (y1-y2)
     z = (z1-z2)
@@ -16,8 +18,11 @@ def distancePoints((x1,y1,z1),(x2,y2,z2)):
 
 
 def centerMassOfResidue(dPDB):
-    """Calculates the center of mass of each residue contained in dPDB (all = True & reslist = False) or a 
-       subset of residues given in the residue list (["12_A", "13_A", "27_A"])"""
+    """
+    Calculates the center of mass of each residue contained in dPDB
+    Input : dPDB a dictionary
+    Output : dPDB with XCM, YCM and ZCM the coordinates of the center of mass of each residue
+    """
 
     reslist = dPDB["position"]
     
@@ -27,10 +32,11 @@ def centerMassOfResidue(dPDB):
         
         # looping over the current residue atoms
         for atom in dPDB[res]["atome"] :
-            x +=dPDB[res][atom]["x"]
-            y +=dPDB[res][atom]["y"]
-            z +=dPDB[res][atom]["z"]
-            
+            x += dPDB[res][atom]["x"]
+            y += dPDB[res][atom]["y"]
+            z += dPDB[res][atom]["z"]
+        
+        #Calculation of the center of mass of the current residue    
         Xcm = float(x)/len(dPDB[res]["atome"]) 
         Ycm = float(y)/len(dPDB[res]["atome"])
         Zcm = float(z)/len(dPDB[res]["atome"])
@@ -40,7 +46,11 @@ def centerMassOfResidue(dPDB):
         
 
 def computeDist_dico(d_res1, d_res2, mode) :
-    """res1, res2 are dico corresponding to residue 1 and residue 2 respectively """
+    """
+    Compute the distance between to residues
+    Input : d_res1, d_res2 are dictionary corresponding to residue 1 and residue 2 respectively, mode atom or center
+    Output : the distance between d-res1 and d_res2
+    """
 
 	#Compute the distance between atoms of a couple of residues
     if mode == "atom" :

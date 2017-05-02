@@ -10,9 +10,12 @@ from parsing import parserPDB
 
 	
 def computeRMSD (dPDB1, dPDB2, l_atoms, bfactor):
-	"""Compute RMSD between the two PDB dictionnaries on the given atom list
-	input : 2 PDB dictionaries
-	output : RMSD score"""
+	"""
+	compute RMSD between the two PDB dictionnaries on the given atom list
+	if bfactor is True, compute RMSD only on the interface
+	input : Dico dPDB1 and dPDB2 corresponding to the two molecules to compare
+	output : RMSD score
+	"""
 
 	N = 0
 	
@@ -29,9 +32,11 @@ def computeRMSD (dPDB1, dPDB2, l_atoms, bfactor):
 				if pos != "position" :
 			
 					for atom in dPDB1[chain][pos] :
-				
+						
+						#Consider only the atoms given in l_atom list parameter
 						if atom in l_atoms :
 							
+							#If bfactor is True, compute the distance between only atoms of the interface residues
 							if bfactor :
 								
 								if dPDB1[chain][pos]["bfactor"] :
@@ -39,10 +44,11 @@ def computeRMSD (dPDB1, dPDB2, l_atoms, bfactor):
 									distanceSum += pow(distancePoints((dPDB1[chain][pos][atom]["x"],dPDB1[chain][pos][atom]["y"], dPDB1[chain][pos][atom]["z"]),(dPDB2[chain][pos][atom]["x"], dPDB2[chain][pos][atom]["y"], dPDB2[chain][pos][atom]["z"])), 2)
 									N += 1		
 							else :
-								
+								#Else compute the distance between all atoms
 								distanceSum += pow(distancePoints((dPDB1[chain][pos][atom]["x"],dPDB1[chain][pos][atom]["y"], dPDB1[chain][pos][atom]["z"]),(dPDB2[chain][pos][atom]["x"], dPDB2[chain][pos][atom]["y"], dPDB2[chain][pos][atom]["z"])), 2)
 								N += 1	
-				
+	
+	#If bfactor is True and there is no interface			
 	if N!=0:
 		RMSD = sqrt(distanceSum/N)		
 	
