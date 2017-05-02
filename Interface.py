@@ -21,14 +21,14 @@ def initBfactor(dPDB) :
 
 
 def computeInterfaceScore(dPDB1, dPDB2, threshold, mode) :
-    """
-    compute interface hydrophobic/hydrophilic score proportion by comparing hydrophobic properties of each atom
-    which belong to the interface
-    Input: dico dPDB1 and dPDB2 corresponding to the receptor and ligand, threshold distance for the interface,
-    mode for the mode of calculation of the distance (center or atom)
-    Output: the hydrophobic/hydrophilic proportion at the interface between ligand and receptor
-    """
-    #Initialize bfactor
+	"""
+	compute interface hydrophobic/hydrophilic score proportion by comparing hydrophobic properties of each atom
+	which belong to the interface
+	Input: dico dPDB1 and dPDB2 corresponding to the receptor and ligand, threshold distance for the interface,
+	mode for the mode of calculation of the distance (center or atom)
+	Output: the hydrophobic/hydrophilic proportion at the interface between ligand and receptor
+	"""
+	#Initialize bfactor
 	initBfactor(dPDB1)
 	initBfactor(dPDB2)
     
@@ -57,7 +57,11 @@ def computeInterfaceScore(dPDB1, dPDB2, threshold, mode) :
 
 
 def interfaceHydrophobicity(listBestHits, listBestScores, dico_Rec, thresholdParam, interfaceModeParam):
-
+	"""
+	Compute the new score by multiplyinf the former scores by (1-output of the ComputInterfaceScore)
+	Input: a list of the 100 best files and their score (see function Extract100Bests) as well as the threshold and the mode (arguments)
+	Output: a list of the new scores taking hydrophobicity into account
+	"""
 	listPercentage=[]
 	for files in listBestHits:
 		dico=parserPDB(files)
@@ -70,14 +74,14 @@ def interfaceHydrophobicity(listBestHits, listBestScores, dico_Rec, thresholdPar
     
 
 def computeInterface(dPDB, threshold, mode) :
-    """
-    compute interface of a ligand-receptor complex
-    Input: dico dPDB corresponding to the ligand-receptor complex, threshold distance for the interface, mode 
-    for the mode of calculation of the distance (center or atom)
-    Output: dico dPDB with modified bfactor at the interface and the number of residues which belong to the 
-    interface
-    """
-    #Initialize bfactor
+	"""
+	compute interface of a ligand-receptor complex
+	Input: dico dPDB corresponding to the ligand-receptor complex, threshold distance for the interface, mode 
+	for the mode of calculation of the distance (center or atom)
+	Output: dico dPDB with modified bfactor at the interface and the number of residues which belong to the 
+	interface
+	"""
+	#Initialize bfactor
 	initBfactor(dPDB)
 	#The number of residues with belong to the interface
 	nbResInter = 0
