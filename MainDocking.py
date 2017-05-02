@@ -292,6 +292,6 @@ if __name__ == '__main__':
 	For easy manipulation with Pymol
 	'''
 	try:
-		writeInterfacePDB(dico_compl_predit,"complexe_predit_score1.pdb")
+		writeInterfacePDB(dico_compl_predit,"complexe_predit_score2.pdb")
 	except:
 		print "ERROR : Could not edit complexe_predit_score1.pdb"
