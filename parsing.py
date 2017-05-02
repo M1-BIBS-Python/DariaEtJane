@@ -7,24 +7,28 @@ dcharge = chargePDB()
 dvdw, depsilon = epsilon_vdw_PDB()
 
 def parserPDB(infile):
-	
+	"""
+	Parse a PDB file to extract the chains, the residues, the atoms, and 3D coordinates of the atoms
+	Input : a PDB file
+	Output : a dictionnary containing the variables of interest
+	"""
 	fichier = open(infile,"r")
-	lines = fichier.readlines() #Chaque element est une ligne du fichier
+	lines = fichier.readlines()
 
 	d_proteine= {}
 	d_proteine["nchaine"]=[]
 
 	for i in lines:
-		if i[0:4]=="ATOM": #On verifie qu'on est bien sur la ligne d'un atome
+		if i[0:4]=="ATOM": #To make sure it is the line of an atom
 			
-			nchaine=i[21] #On enregistre le numero de chaine
-			#On verifie que la chaine n'est pas deja enregistree dans le dictionnaire pour ne pas ecraser l'information
+			nchaine=i[21] #Chain number
+			#Making sure that the chain doesn't already exist to avoid overriding
 			if not nchaine in d_proteine["nchaine"]:
 				d_proteine["nchaine"].append(nchaine)
 				d_proteine[nchaine]={}
 				d_proteine[nchaine]["position"]=[]
 			
-			#Pour chaque chaine, on enregistre les positions
+			#For each chain, keep the residue
 			position=i[22:26].strip()
 			if not position in d_proteine[nchaine]["position"]:
 				d_proteine[nchaine]["position"].append(position)
@@ -32,13 +36,13 @@ def parserPDB(infile):
 				d_proteine[nchaine][position]["residu"]=i[17:20].strip()
 				d_proteine[nchaine][position]["atome"]=[]
 			
-			#Pour chaque position on enregistre les atomes
+			#For each residue, the atom
 			atome=i[12:16].strip()
 			if not atome in d_proteine[nchaine][position]["atome"]:
 				d_proteine[nchaine][position]["atome"].append(atome)
 				d_proteine[nchaine][position][atome]={}
 			
-			#Pour chaque atome, on enregistre ses coordonnees et son ID
+			#For each atom, the 3D Coord
 			d_proteine[nchaine][position][atome]["x"]=float(i[30:38])
 			d_proteine[nchaine][position][atome]["y"]=float(i[38:46])
 			d_proteine[nchaine][position][atome]["z"]=float(i[46:54])
@@ -47,7 +51,10 @@ def parserPDB(infile):
 	return d_proteine
 
 def assignParams(dPDB, dcharge, dvdw, depsilon):
-
+    '''
+    Assign to a PDB dictionnary the charge, vdw, and epsilon
+    Input : the PDB dictionnary, the dictionnary of the charge, vdw, and epsilon of the atom
+    '''
     first = True
     
     for chain in dPDB["nchaine"]:
@@ -145,6 +152,8 @@ def assignParams(dPDB, dcharge, dvdw, depsilon):
 					dPDB[chain][resi][atomi]["vdw"] =  dvdw[dPDB[chain][resi]["residu"]][atomi]
 					dPDB[chain][resi][atomi]["epsilon"] =  depsilon[dPDB[chain][resi]["residu"]][atomi]
 
+					
+
 
 def preparePDB(infile) :
     """
@@ -161,11 +170,16 @@ def preparePDB(infile) :
 
 
 def parseDirectory(indir, dico_Rec):
+	"""
+	Parse the directory contaning all the conformations
+	Input : name of the directory, and dictionnary of the receptor
+	Ouput : a list of all file numbers in the directory and a list of all scores computed from the files
+	"""
 	n=0
 	listFiles=[]
 	listScores=[]
 	for files in os.listdir(indir):
-		if files.startswith("1BRS") :
+		if files.startswith("1BRS") : #To avoid hidden files
 			pathfile=os.path.join(indir,files)
 			n+=1
 			togo=949-n
@@ -173,7 +187,7 @@ def parseDirectory(indir, dico_Rec):
 			print "Number of files remaning : "+str(togo)
 			dico_confH = preparePDB(pathfile)
 			a, b, c, d, e, f, g=files.split("_")
-			f=int(f)
+			f=int(f) #f correspond to the number of the file
 			listFiles.append(f)
 			listScores.append(compEner(dico_Rec, dico_confH, 'B', 'D'))
 			dico_confH = {}
